@@ -1,8 +1,8 @@
 /*
-File    : Client_FBGs.cpp
+File    : Client_I4 Interrogator.cpp
 Author  : Sooyeon Kim
 Date    : June 06, 2023
-Update  : April 16, 2024
+Update  : April 14, 2024
 Description : C++98
 Protocol    :
 */
@@ -22,7 +22,7 @@ Protocol    :
 #pragma comment(lib, "ws2_32.lib")
 
 #define PORT 4578
-#define PACKET_SIZE 11  // int8_t 3°³, double 1°³ ¼Û½Å
+#define PACKET_SIZE 11  // int8_t 3Â°Â³, double 1Â°Â³ Â¼Ã›Â½Ã…
 #define SERVER_IP "192.168.0.140"
 
 #define PORT_I4 9931
@@ -143,7 +143,7 @@ int main() {
 
     /*****************************************************************/
     /**** Receiving data from I4, and sending data to main server ****/
-    uint8_t count = 0;
+
     while (1) {
         if (_kbhit()) { // Loop until ESC key is pressed
             int ch = _getch();
@@ -212,17 +212,16 @@ int main() {
                     //printf("fiber#%u, ", fiber);
                     //printf("channel#%u\t", channel);
                     //printf("wavelength::%.3f nm\n", wavelength_data);
-                    count += 1;
 
-                    uint8_t int_data[3] = { channel, count, sensor };
+                    uint8_t int_data[3] = { channel, fiber, sensor };
                     char cBuffer[PACKET_SIZE];
                     
                     memcpy(cBuffer, int_data, sizeof(int_data));
                     memcpy(cBuffer + sizeof(int_data), &wavelength_data, sizeof(wavelength_data));
                     send(hSocket, cBuffer, PACKET_SIZE, 0);
 
-                    printf("Sent data #%u - Channel#%u, Sensor#%u, Wavelength: %.5f nm\n",
-                        count, channel, sensor, wavelength_data);
+                    printf("Sent data - Channel#%u, Sensor#%u, Wavelength: %.5f nm\n",
+                        channel, sensor, wavelength_data);
 
                     std::this_thread::sleep_for(std::chrono::milliseconds(10)); //100Hz
                     //Sleep(1);
