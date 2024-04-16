@@ -18,7 +18,7 @@ and error information. The program then sends the processed data to a main serve
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <conio.h> // For _kbhit and _getch
+#include <conio.h>
 #include <stdint.h>
 
 #include <thread>
@@ -27,8 +27,8 @@ and error information. The program then sends the processed data to a main serve
 #pragma comment(lib, "ws2_32.lib")
 
 #define PORT 4578
-#define PACKET_SIZE 11  // int8_t 3°³, double 1°³ ¼Û½Å
-#define SERVER_IP "192.168.0.140"
+#define PACKET_SIZE 11  // int8_t 3, double 1
+#define SERVER_IP ""
 
 #define PORT_I4 9931
 #define SERVER_I4_IP "10.100.51.16"
