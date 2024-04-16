@@ -4,7 +4,12 @@ Author  : Sooyeon Kim
 Date    : June 06, 2023
 Update  : April 14, 2024
 Description : C++98
-Protocol    :
+Protocol    : TCP/IP Client for I4 Interrogator
+
+This C++ program acts as a client for an I4 Interrogator device, communicating over TCP/IP.
+It receives data packets from the I4 device, processes them, and sends the processed data
+to a main server. The packets include header information, payload data (peak or timestamped peaks),
+and error information. The program then sends the processed data to a main server.
 */
 
 
