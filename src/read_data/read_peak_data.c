@@ -1,11 +1,26 @@
 /*
-   File       : Client_I4_Interrogator.c
-   Author     : Sooyeon Kim
-   Date       : June 06, 2023
-   Update     : April 21, 2024
-   Description: This file contains the implementation of a client application designed to communicate with an I4 Interrogator device over a TCP connection.
-   Protocol   : The client application communicates with the server using the TCP protocol.
+File    : read_peak_data.c
+Author  : Sooyeon Kim
+Date    : June 06, 2023
+Update  : April 21, 2024
+Description : Client program for communicating with an I4 Interrogator device.
+Protocol    : TCP/IP
+
+This program serves as a client to communicate with an I4 Interrogator device over a TCP/IP connection.
+The protocol involves the following packet structure:
+
+- Header Packet: Contains information about packet counter, sweeping type, trigger mode, data offset, data length, and timestamp.
+- Payload Packet: Carries data related to peak values or time-stamped peak values.
+- Error Packet: Indicates errors encountered during data transmission.
+- Flag Packet: Holds sweep counter information.
+
+Updates:
+- Added functions for processing different types of payload packets (peak payload and time-stamped peak payload).
+- Implemented error handling for receiving payload and error packets.
+- Included a calibration function to calculate force based on wavelength measurements.
+- Defined constants for initial wavelengths of FBGs on different channels and sensors.
 */
+
 
 #include <stdio.h>
 #include <stdlib.h>
