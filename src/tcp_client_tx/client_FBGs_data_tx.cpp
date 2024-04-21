@@ -27,8 +27,8 @@ and error information. The program then sends the processed data to a main serve
 #pragma comment(lib, "ws2_32.lib")
 
 #define PORT 4578
-#define PACKET_SIZE 11  // int8_t 3개, double 1개 송신
-#define SERVER_IP "192.168.0.140"
+#define PACKET_SIZE 11  // int8_t 3, double 1
+#define SERVER_IP "0.0.0.0"
 
 #define PORT_I4 9931
 #define SERVER_I4_IP "10.100.51.16"
