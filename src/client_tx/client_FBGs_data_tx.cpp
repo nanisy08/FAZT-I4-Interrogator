@@ -1,5 +1,5 @@
 /*
-File    : Client_I4 Interrogator.cpp
+File    : client_FBGs_data_tx.cpp
 Author  : Sooyeon Kim
 Date    : June 06, 2023
 Update  : April 14, 2024
@@ -18,7 +18,7 @@ and error information. The program then sends the processed data to a main serve
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <conio.h>
+#include <conio.h> // For _kbhit and _getch
 #include <stdint.h>
 
 #include <thread>
@@ -27,8 +27,8 @@ and error information. The program then sends the processed data to a main serve
 #pragma comment(lib, "ws2_32.lib")
 
 #define PORT 4578
-#define PACKET_SIZE 11  // int8_t 3, double 1
-#define SERVER_IP ""
+#define PACKET_SIZE 11  // int8_t 3개, double 1개 송신
+#define SERVER_IP "192.168.0.140"
 
 #define PORT_I4 9931
 #define SERVER_I4_IP "10.100.51.16"
@@ -154,10 +154,11 @@ int main() {
             int ch = _getch();
             if (ch == 27) {
                 printf("Exiting program.\n");
+                closesocket(hSocket);
+                closesocket(hSocket_I4);
                 break;
             }
         }
-
 
         /* 1. Receiving header packet */
         char buffer_header[HEADER_SIZE] = { 0 };
@@ -196,6 +197,18 @@ int main() {
                         printf("Client disconnected\n");
                     }
                     processPacket_Payload(buffer_payload, &channel, &fiber, &sensor, &wavelength_data);
+
+                    uint8_t int_data[3] = { channel, fiber, sensor };
+                    char cBuffer[PACKET_SIZE];
+                    //memset(cBuffer, 0, PACKET_SIZE);
+
+                    memcpy(cBuffer, int_data, sizeof(int_data));
+                    memcpy(cBuffer + sizeof(int_data), &wavelength_data, sizeof(wavelength_data));
+                    send(hSocket, cBuffer, PACKET_SIZE, 0);
+
+                    printf("Sent data %u - Channel#%u, Sensor#%u, Wavelength: %.5f nm\n",
+                        fiber, channel, sensor, wavelength_data);
+
                 }
             }
             // receiving time-stamped peak payload
@@ -220,16 +233,15 @@ int main() {
 
                     uint8_t int_data[3] = { channel, fiber, sensor };
                     char cBuffer[PACKET_SIZE];
-                    
+                    //memset(cBuffer, 0, PACKET_SIZE);
+
                     memcpy(cBuffer, int_data, sizeof(int_data));
                     memcpy(cBuffer + sizeof(int_data), &wavelength_data, sizeof(wavelength_data));
                     send(hSocket, cBuffer, PACKET_SIZE, 0);
 
-                    printf("Sent data - Channel#%u, Sensor#%u, Wavelength: %.5f nm\n",
-                        channel, sensor, wavelength_data);
+                    printf("Sent data %u - Channel#%u, Sensor#%u, Wavelength: %.5f nm\n",
+                        fiber, channel, sensor, wavelength_data);
 
-                    std::this_thread::sleep_for(std::chrono::milliseconds(10)); //100Hz
-                    //Sleep(1);
                 }
             }
         }
@@ -259,6 +271,18 @@ int main() {
                         printf("Client disconnected\n");
                     }
                     processPacket_Payload(buffer_payload, &channel, &fiber, &sensor, &wavelength_data);
+
+                    uint8_t int_data[3] = { channel, fiber, sensor };
+                    char cBuffer[PACKET_SIZE];
+                    //memset(cBuffer, 0, PACKET_SIZE);
+
+                    memcpy(cBuffer, int_data, sizeof(int_data));
+                    memcpy(cBuffer + sizeof(int_data), &wavelength_data, sizeof(wavelength_data));
+                    send(hSocket, cBuffer, PACKET_SIZE, 0);
+
+                    printf("Sent data %u - Channel#%u, Sensor#%u, Wavelength: %.5f nm\n",
+                        fiber, channel, sensor, wavelength_data);
+
                 }
             }
             // receiving time-stamped peak payload
@@ -275,6 +299,18 @@ int main() {
                         printf("Client disconnected\n");
                     }
                     processPacket_Payload(buffer_payload, &channel, &fiber, &sensor, &wavelength_data);
+
+                    uint8_t int_data[3] = { channel, fiber, sensor };
+                    char cBuffer[PACKET_SIZE];
+                    //memset(cBuffer, 0, PACKET_SIZE);
+
+                    memcpy(cBuffer, int_data, sizeof(int_data));
+                    memcpy(cBuffer + sizeof(int_data), &wavelength_data, sizeof(wavelength_data));
+                    send(hSocket, cBuffer, PACKET_SIZE, 0);
+
+                    printf("Sent data %u - Channel#%u, Sensor#%u, Wavelength: %.5f nm\n",
+                        fiber, channel, sensor, wavelength_data);
+
                 }
             }
         }
@@ -293,8 +329,6 @@ int main() {
     }
 
     // Close TCP/IP communication
-    closesocket(hSocket);
-    closesocket(hSocket_I4);
     WSACleanup();
 
     return 0;
@@ -339,6 +373,12 @@ int processPacket_Header(char* buffer_header, int* sweep_type, int* DO, int* DL)
 }
 
 int processPacket_tsPayload(char* buffer_payload, uint8_t* channel, uint8_t* fiber, uint8_t* sensor, double* wavelength_data) {
+    // 초기화
+    memset(channel, 0, sizeof(uint8_t));
+    memset(fiber, 0, sizeof(uint8_t));
+    memset(sensor, 0, sizeof(uint8_t));
+    memset(wavelength_data, 0, sizeof(double));
+    
     struct ts_peak_payload_t* ts_payload = (struct ts_peak_payload_t*)(buffer_payload);
 
     ts_peak_data_t peak_data;
@@ -355,6 +395,12 @@ int processPacket_tsPayload(char* buffer_payload, uint8_t* channel, uint8_t* fib
 }
 
 int processPacket_Payload(char* buffer_payload, uint8_t* channel, uint8_t* fiber, uint8_t* sensor, double* wavelength_data) {
+    // 초기화
+    memset(channel, 0, sizeof(uint8_t));
+    memset(fiber, 0, sizeof(uint8_t));
+    memset(sensor, 0, sizeof(uint8_t));
+    memset(wavelength_data, 0, sizeof(double));
+    
     struct peak_payload_t* payload = (struct peak_payload_t*)(buffer_payload);
 
     peak_data_t peak_data;
